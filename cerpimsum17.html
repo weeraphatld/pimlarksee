@@ -55,7 +55,7 @@
 
         async function fetchData() {
             try {
-                const response = await fetch('https://sheets.googleapis.com/v4/spreadsheets/19TDrPHIAe9_A5iSas-FH3jj9K3AOC9KPAhtGGQe4COg/values/ชีต1?alt=json&key=AIzaSyAD_aNO81AEscbG0Ij-krW7neHe6FebBDE');
+                const response = await fetch('https://sheets.googleapis.com/v4/spreadsheets/19TDrPHIAe9_A5iSas-FH3jj9K3AOC9KPAhtGGQe4COg/values/cerpim17?alt=json&key=AIzaSyAD_aNO81AEscbG0Ij-krW7neHe6FebBDE');
                 const result = await response.json();
                 data = result.values ? result.values.slice(1) : [];  // ข้ามแถวแรก
             } catch (error) {
