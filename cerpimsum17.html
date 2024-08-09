@@ -13,14 +13,20 @@
     <link href="https://fonts.googleapis.com/css2?family=Itim&display=swap" rel="stylesheet">
     
     <style>
-        body {
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
             background-color: #f4f4f4;
             font-family: 'Itim', cursive;
-            padding: 20px;
         }
         .container {
-            max-width: 600px;
-            margin: auto;
+            width: 100%;
+            max-width: none;
+            margin: 0;
+            padding: 20px;
+            text-align: center; /* เพิ่มการจัดตำแหน่งกึ่งกลาง */
+            
         }
         #suggestions {
             position: absolute;
@@ -30,6 +36,7 @@
             border: 1px solid #ccc;
             border-radius: 0.25rem;
             display: none;
+            text-align: left; /* เพิ่มการจัดตำแหน่งชิดซ้าย */
         }
         #suggestions .list-group-item {
             cursor: pointer;
@@ -42,7 +49,12 @@
             background-color: #f8f9fa;
             border-top: 1px solid #dee2e6;
             font-family: 'Itim', cursive;
-            margin: 20px;
+            margin: 0;
+        }
+        img {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
         }
     </style>
 </head>
