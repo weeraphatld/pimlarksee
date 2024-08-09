@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>เกียรติบัตร โครงการสัมมนาผู้นำชมรมพิมพ์หลากสี ครั้งที่ 17</title>
+    <title>ระบบค้นหาเกียรติบัตร โครงการสัมมนาผู้นำชมรมพิมพ์หลากสี ครั้งที่ 17</title>
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -32,11 +32,21 @@
         #suggestions .list-group-item {
             cursor: pointer;
         }
+        .footer {
+    text-align: center;
+    margin-top: 50px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    background-color: #f8f9fa;
+    border-top: 1px solid #dee2e6;
+    font-family: Arial, sans-serif;
+    margin: 20px;
+}
     </style>
 </head>
 <body>
     <div class="container">
-        <h1 class="text-center my-4">เกียรติบัตร โครงการสัมมนาผู้นำชมรมพิมพ์หลากสี ครั้งที่ 17</h1>
+        <h1 class="text-center my-4">ระบบค้นหาเกียรติบัตร<br>โครงการสัมมนาผู้นำชมรมพิมพ์หลากสี ครั้งที่ 17</h1>
         <img src="https://i.ibb.co/6DmZH7t/image-2024-08-07-101159514.png" class="img-fluid mb-4" alt="Banner Image">
         <div class="mb-3 position-relative">
             <input type="text" class="form-control" id="search-name" placeholder="ชื่อ-นามสกุล" oninput="showSuggestions()">
@@ -44,6 +54,11 @@
         </div>
         <button class="btn btn-primary w-100" onclick="searchCertificate()">ค้นหา</button>
     </div>
+    <div class="footer">
+    <p>พัฒนาโดย นายวีรภัทร ลอดทอง</p>
+    <p>นิสิตสาขาคณิตศาสตร์ คณะศึกษาศาสตร์ มหาวิทยาลัยมหาสารคาม</p>
+    <p>&copy; 2024 สงวนลิขสิทธิ์</p>
+</div>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
