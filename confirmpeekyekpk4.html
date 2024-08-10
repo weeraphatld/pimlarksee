@@ -32,7 +32,7 @@
             try {
                 const response = await fetch(apiUrl);
                 const data = await response.json();
-                const rows = data.values.slice(1); 
+                const rows = data.values.slice(1); // ตัดบรรทัดแรกออก
 
                 // ค้นหาข้อมูลจากรหัสนิสิตในคอลัมน์ A
                 const found = rows.find(row => row[0] === studentId);
@@ -41,11 +41,11 @@
                 Swal.close();
 
                 if (found) {
-                    const name = found[1]; 
-                    const nickname = found[2]; 
-                    const position = found[5]; 
-                    const status = found[7]; 
-                    const confirmationLink = found[6];
+                    const name = found[1]; // คอลัมน์ B: ชื่อ-นามสกุล
+                    const nickname = found[2]; // คอลัมน์ C: ชื่อเล่น
+                    const position = found[5]; // คอลัมน์ F: สายงานที่ผ่านการคัดเลือก
+                    const status = found[7]; // คอลัมน์ H: สถานะ
+                    const confirmationLink = found[6]; // คอลัมน์ G: ลิงก์ยืนยันสิทธิ์
 
                     if (status === "ผ่านการคัดเลือกให้เป็นพี่ค่าย") {
                         Swal.fire({
