@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ตรวจสอบชื่อผู้ผ่านการคัดเลือกพี่ค่าย</title>
+    <!-- SweetAlert2 CDN -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+    <h1>ตรวจสอบชื่อผู้ผ่านการคัดเลือกพี่ค่าย KPK4</h1>
+    <input type="text" id="studentId" placeholder="พิมพ์รหัสนิสิต 11 ตัว">
+    <button onclick="checkSelection()">ค้นหา</button>
+    <div id="result"></div>
+
+    <script>
+        async function checkSelection() {
+            const studentId = document.getElementById('studentId').value;
+            const apiUrl = 'https://sheets.googleapis.com/v4/spreadsheets/19TDrPHIAe9_A5iSas-FH3jj9K3AOC9KPAhtGGQe4COg/values/confirmpeekye?alt=json&key=AIzaSyAD_aNO81AEscbG0Ij-krW7neHe6FebBDE';
+
+            // แสดง SweetAlert loading ขณะโหลดข้อมูล
+            const loadingSwal = Swal.fire({
+                title: 'กำลังโหลดข้อมูล...',
+                text: 'กรุณารอสักครู่',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            try {
+                const response = await fetch(apiUrl);
+                const data = await response.json();
+                const rows = data.values.slice(1); 
+
+                // ค้นหาข้อมูลจากรหัสนิสิตในคอลัมน์ A
+                const found = rows.find(row => row[0] === studentId);
+
+                // ปิด SweetAlert loading
+                Swal.close();
+
+                if (found) {
+                    const name = found[1]; 
+                    const nickname = found[2]; 
+                    const position = found[5]; 
+                    const status = found[7]; 
+                    const confirmationLink = found[6];
+
+                    if (status === "ผ่านการคัดเลือกให้เป็นพี่ค่าย") {
+                        Swal.fire({
+                            title: 'ยินดีด้วย คุณผ่านการคัดเลือกให้เป็นพี่ค่าย KPK4',
+                            html: `
+                                <p><strong>ชื่อ-นามสกุล:</strong> ${name}</p>
+                                <p><strong>ชื่อเล่น:</strong> ${nickname}</p>
+                                <p><strong>สายงานที่ผ่านการคัดเลือก:</strong> ${position}</p>
+                            `,
+                            icon: 'success',
+                            confirmButtonText: 'ยืนยันสิทธิ์',
+                            confirmButtonColor: '#3085d6',
+                            showCloseButton: true
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.open(confirmationLink, '_blank');
+                            }
+                        });
+                    } else if (status === "ไม่ผ่านการคัดเลือกให้เป็นพี่ค่าย") {
+                        Swal.fire({
+                            title: 'คุณไม่ผ่านการคัดเลือกให้เป็นพี่ค่าย KPK4',
+                            icon: 'error',
+                            confirmButtonText: 'ปิด',
+                            confirmButtonColor: '#d33',
+                            showCloseButton: true
+                        });
+                    } else {
+                        Swal.fire({
+                            title: 'สถานะของรหัสนิสิตไม่ถูกต้อง',
+                            icon: 'warning',
+                            confirmButtonText: 'ปิด',
+                            confirmButtonColor: '#f39c12',
+                            showCloseButton: true
+                        });
+                    }
+                } else {
+                    Swal.fire({
+                        title: 'ไม่พบรหัสนิสิตในระบบ',
+                        icon: 'warning',
+                        confirmButtonText: 'ปิด',
+                        confirmButtonColor: '#f39c12',
+                        showCloseButton: true
+                    });
+                }
+            } catch (error) {
+                Swal.fire({
+                    title: 'เกิดข้อผิดพลาด',
+                    text: error.message,
+                    icon: 'error',
+                    confirmButtonText: 'ปิด',
+                    confirmButtonColor: '#d33',
+                    showCloseButton: true
+                });
+            }
+        }
+    </script>
+</body>
+</html>
