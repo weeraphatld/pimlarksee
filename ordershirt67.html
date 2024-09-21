@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>สั่งเสื้อชมรมพิมพ์หลากสี มมส ปีการศึกษา 2567</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+        }
+        .product-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .product {
+            background-color: #f8d7da;
+            padding: 15px;
+            margin: 10px;
+            width: 80%;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .price {
+            color: green;
+            font-weight: bold;
+        }
+        .quantity-select {
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+        .next-button {
+            position: fixed; /* ปุ่มลอย */
+            bottom: 20px; /* ระยะห่างจากขอบด้านล่าง */
+            right: 20px; /* ระยะห่างจากขอบด้านขวา */
+            padding: 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 50%; /* ทำให้ปุ่มเป็นวงกลม */
+            cursor: pointer;
+            font-size: 20px; /* ขนาดไอคอน */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1000; /* ให้ปุ่มอยู่ด้านบนสุด */
+        }
+        .next-button i {
+            margin: 0; /* ไม่มีช่องว่างภายในไอคอน */
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> <!-- เรียกใช้ Font Awesome -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> <!-- เรียกใช้งาน SweetAlert2 -->
+</head>
+<body>
+    <h1>สั่งเสื้อชมรมพิมพ์หลากสี มมส ปีการศึกษา 2567</h1>
+    <div class="product-container" id="product-container">
+        <!-- สินค้าจะถูกแสดงในนี้ -->
+    </div>
+    <button class="next-button" onclick="handleNextClick()">
+        <i class="fas fa-shopping-cart"></i> <!-- ไอคอนรถเข็น -->
+    </button>
+
+    <script>
+        // URL ของ Google Sheets ที่จะดึงข้อมูลมาใช้
+        const SHEET_ID = '1jOYsHqaop1mHzdwQzs8J1xwFWSm-uKbXX8jBQmSXFJI'; // เปลี่ยนเป็น Google Sheet ID ของคุณ
+        const API_KEY = 'AIzaSyAD_aNO81AEscbG0Ij-krW7neHe6FebBDE'; 
+        const RANGE = 'Sheet3!A2:Z'; // ดึงข้อมูลจากแถวที่ 2 เป็นต้นไป
+        const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${RANGE}?key=${API_KEY}`;
+        
+        let productData = []; // เก็บข้อมูลสินค้า
+
+        async function fetchProductData() {
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                productData = data.values; // บันทึกข้อมูลสินค้าในตัวแปร global
+                displayProducts(productData);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        }
+
+        function displayProducts(products) {
+            const container = document.getElementById('product-container');
+            container.innerHTML = ''; // ล้างข้อมูลเก่าก่อนแสดงข้อมูลใหม่
+
+            products.forEach((product, index) => {
+                const [id, name, detail, chest, price] = product;
+
+                const productDiv = document.createElement('div');
+                productDiv.className = 'product';
+                productDiv.innerHTML = `
+                    <h2>${name}</h2>
+                    <p>รายละเอียด: ${detail}</p>
+                    <p class="price">ราคา: ${price} บาท</p>
+                    <label for="quantity-${index}">จำนวน:</label>
+                    <select id="quantity-${index}" class="quantity-select">
+                        <option value="0">0</option>
+                        ${generateOptions(1, 10)}
+                    </select>
+                `;
+                container.appendChild(productDiv);
+            });
+        }
+
+        // ฟังก์ชันที่ใช้สร้างตัวเลือกใน dropdown
+        function generateOptions(min, max) {
+            let options = '';
+            for (let i = min; i <= max; i++) {
+                options += `<option value="${i}">${i}</option>`;
+            }
+            return options;
+        }
+
+        function handleNextClick() {
+            let summary = '';
+            let totalQuantity = 0;
+            let totalPrice = 0;
+            
+            // สรุปข้อมูลการสั่งซื้อ
+            productData.forEach((product, index) => {
+                const [id, name, detail, chest, price] = product;
+                const quantity = document.getElementById(`quantity-${index}`).value;
+                if (quantity > 0) {
+                    summary += `${name} จำนวน: ${quantity} \n`;
+                    totalQuantity += parseInt(quantity);
+                    totalPrice += parseInt(price) * parseInt(quantity);
+                }
+            });
+
+            if (totalQuantity === 0) {
+                Swal.fire('กรุณาเลือกจำนวนสินค้าอย่างน้อย 1 รายการ');
+                return;
+            }
+
+            // คำนวณราคารวมสินค้า
+            summary += `\nราคารวมสินค้า: ${totalPrice} บาท`;
+
+            // แสดง SweetAlert สรุปคำสั่งซื้อและการเลือกการจัดส่ง
+            Swal.fire({
+                title: 'สรุปคำสั่งซื้อ',
+                html: summary.replace(/\n/g, '<br>'),
+                input: 'radio',
+                inputOptions: {
+                    'self': 'รับด้วยตนเอง',
+                    'delivery': 'จัดส่งสินค้า (ค่าส่ง 45 บาท)'
+                },
+                inputValidator: (value) => {
+                    if (!value) {
+                        return 'กรุณาเลือกวิธีการรับสินค้า';
+                    }
+                },
+                showCancelButton: true,
+                confirmButtonText: 'สั่งซื้อพร้อมจ่ายเงิน (Google Form)'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // เพิ่มค่าจัดส่งถ้าเลือกจัดส่งสินค้า
+                    let finalTotalPrice = totalPrice;
+                    if (result.value === 'delivery') {
+                        finalTotalPrice += 45; // บวกค่าจัดส่ง 45 บาท
+                    }
+
+                    // สร้างข้อความสรุปใหม่รวมค่าจัดส่ง
+                    let finalSummary = summary + (result.value === 'delivery' ? '\nจัดส่งสินค้า: 45 บาท' : '') + `\nยอดรวมทั้งหมด: ${finalTotalPrice} บาท`;
+
+                    // สร้างลิงค์ Google Form พร้อม auto-fill ข้อมูล
+                    const googleFormLink = createGoogleFormLink(finalSummary, finalTotalPrice);
+                    window.open(googleFormLink, '_blank'); // เปิด Google Form ในหน้าต่างใหม่
+                }
+            });
+        }
+
+        function createGoogleFormLink(summary, totalPrice) {
+            // สร้างลิงค์ Google Form ที่มีการ auto-fill ข้อมูลยอดรวมทั้งหมด
+            const baseUrl = 'https://docs.google.com/forms/d/e/1FAIpQLScucPahUb6kz_bQuacuMyia4S7WlK-6whEtnt-mLp-BK8U08g/viewform?usp=pp_url'; // เปลี่ยนเป็นลิงค์ Google Form ของคุณ
+            const summaryField = encodeURIComponent(summary);
+            const totalField = encodeURIComponent(totalPrice);
+
+            // สร้างลิงค์ auto-fill สำหรับ Google Form
+            const link = `${baseUrl}&entry.1964641713=${summaryField}&entry.1845072351=${totalField}`;
+            return link;
+        }
+
+        fetchProductData();
+    </script>
+</body>
+</html>
