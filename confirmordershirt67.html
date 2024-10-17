@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ยืนยันการสั่งซื้อเสื้อ</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            padding: 20px;
+        }
+        .container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+        }
+        .promptpay-img {
+            max-width: 200px;
+        }
+        .btn-primary-custom {
+            background-color: #007bff;
+            border-color: #007bff;
+            color: white;
+            transition: background-color 0.3s ease;
+        }
+        .btn-primary-custom:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center mb-4">ยืนยันการสั่งซื้อเสื้อ</h1>
+        <form id="order-form">
+<!-- คำนำหน้า -->
+<div class="mb-3">
+    <label for="title" class="form-label">คำนำหน้า:</label>
+    <select id="title" name="title" class="form-select" required>
+        <option value="" disabled selected>เลือกคำนำหน้า</option> <!-- Placeholder -->
+        <option value="นาย">นาย</option>
+        <option value="นาง">นาง</option>
+        <option value="นางสาว">นางสาว</option>
+    </select>
+</div>
+            <!-- ชื่อ-นามสกุล -->
+            <div class="mb-3">
+                <label for="name" class="form-label">ชื่อ-นามสกุล:</label>
+                <input type="text" id="name" name="name" class="form-control" required>
+            </div>
+
+            <!-- เบอร์โทรศัพท์ -->
+            <div class="mb-3">
+                <label for="phone" class="form-label">เบอร์โทรศัพท์:</label>
+                <input type="text" id="phone" name="phone" class="form-control" required>
+            </div>
+
+            <!-- Facebook URL -->
+            <div class="mb-3">
+                <label for="facebook" class="form-label">Facebook URL:</label>
+                <input type="url" id="facebook" name="facebook" class="form-control" required>
+            </div>
+
+           <!-- การรับสินค้า -->
+<div class="mb-3">
+    <label for="pickupMethod" class="form-label">การรับสินค้า:</label>
+    <select id="pickupMethod" name="pickupMethod" class="form-select" onchange="toggleAddressField()" required>
+        <option value="" disabled selected>เลือกการรับสินค้า</option> <!-- Placeholder -->
+        <option value="รับด้วยตนเอง">รับด้วยตนเอง</option>
+        <option value="จัดส่งสินค้า">จัดส่งสินค้า (ค่าส่ง 45 บาท)</option>
+    </select>
+</div>
+
+            <!-- ที่อยู่ -->
+            <div id="address-field" class="mb-3" style="display:none;">
+                <label for="address" class="form-label">ที่อยู่:</label>
+                <textarea id="address" name="address" class="form-control"></textarea>
+            </div>
+
+            <!-- สรุปรายการสั่งซื้อ -->
+            <div class="mb-3">
+                <label class="form-label">สรุปรายการสั่งซื้อ:</label>
+                <p id="orderSummary" class="border p-2 bg-light"></p>
+            </div>
+
+            <!-- ยอดรวมทั้งหมด -->
+            <div class="mb-3">
+                <label class="form-label">ยอดรวมทั้งหมด:</label>
+                <p id="total-price" class="fw-bold"></p>
+                <img id="promptpay" class="promptpay-img" src="" alt="PromptPay QR Code">
+            </div>
+
+            <!-- รูปหลักฐานการโอนเงิน -->
+            <div class="mb-3">
+                <label for="paymentSlip" class="form-label">อัปโหลดหลักฐานการโอนเงิน:</label>
+                <input type="file" id="paymentSlip" name="paymentSlip" class="form-control" accept="image/*" required>
+            </div>
+
+            <!-- ปุ่มสั่งซื้อ -->
+            <button type="button" class="btn btn-primary-custom w-100" onclick="submitOrder()">สั่งซื้อ</button>
+        </form>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Retrieve order summary and total price from localStorage
+        let orderSummary = localStorage.getItem('orderSummary');
+        let totalPrice = parseFloat(localStorage.getItem('totalPrice'));
+        const shippingFee = 45;
+    
+        // Display initial order summary and total price
+        document.getElementById('orderSummary').innerText = orderSummary;
+        document.getElementById('total-price').innerText = `${totalPrice} บาท`;
+        document.getElementById('promptpay').src = `https://promptpay.io/0997416794/${totalPrice}.png`;
+    
+        // Function to toggle address field and update total price
+        function toggleAddressField() {
+            const pickupMethod = document.getElementById('pickupMethod').value;
+            
+            if (pickupMethod === 'จัดส่งสินค้า') {
+                document.getElementById('address-field').style.display = 'block';
+                totalPrice += shippingFee; // Add shipping fee
+                orderSummary += `\nค่าส่งสินค้า: ${shippingFee} บาท`;
+            } else {
+                document.getElementById('address-field').style.display = 'none';
+                totalPrice -= shippingFee; // Remove shipping fee if previously added
+                orderSummary = orderSummary.replace(`\nค่าส่งสินค้า: ${shippingFee} บาท`, ''); // Remove the shipping fee from the summary
+            }
+    
+            // Update displayed total price and order summary
+            document.getElementById('orderSummary').innerText = orderSummary;
+            document.getElementById('total-price').innerText = `${totalPrice} บาท`;
+            document.getElementById('promptpay').src = `https://promptpay.io/0997416794/${totalPrice}.png`;
+        }
+    
+        function submitOrder() {
+            Swal.fire({
+                title: 'กำลังบันทึกข้อมูล',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+    
+            const formData = new FormData(document.getElementById('order-form'));
+            const timestamp = new Date().toLocaleString('th-TH', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    
+            // Append order summary, total price, and timestamp to form data
+            formData.append('timestamp', timestamp);
+            formData.append('orderSummary', orderSummary);
+            formData.append('totalPrice', totalPrice);
+    
+            fetch('https://script.google.com/macros/s/AKfycbyq7EgGod53Rncuy8oUfGrbP4-BoC8ztNm2B2XJqUwkoADwwIwU9uR1DbKwLy1NlrPM6A/exec', {
+                method: 'POST',
+                body: formData
+            }).then(response => response.text()).then(result => {
+                Swal.fire('สั่งซื้อสำเร็จ', '', 'success');
+                document.getElementById('order-form').reset();
+            }).catch(error => {
+                Swal.fire('เกิดข้อผิดพลาด', '', 'error');
+            });
+        }
+    </script>
+</body>
+</html>
