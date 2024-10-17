@@ -135,33 +135,37 @@
             document.getElementById('promptpay').src = `https://promptpay.io/0997416794/${totalPrice}.png`;
         }
     
-        function submitOrder() {
-            Swal.fire({
-                title: 'กำลังบันทึกข้อมูล',
-                allowOutsideClick: false,
-                didOpen: () => {
-                    Swal.showLoading();
-                }
-            });
-    
-            const formData = new FormData(document.getElementById('order-form'));
-            const timestamp = new Date().toLocaleString('th-TH', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' });
-    
-            // Append order summary, total price, and timestamp to form data
-            formData.append('timestamp', timestamp);
-            formData.append('orderSummary', orderSummary);
-            formData.append('totalPrice', totalPrice);
-    
-           fetch('https://weeraphatld.github.io/https://script.google.com/macros/s/AKfycbwSkOh3yL789m9WaaInQvaMnCQICMTwcZRhG4uFJK6RkdUqpoHE6FAY_aNY6D-0Ps0x/exec', {
-    method: 'POST',
-    body: formData
-}).then(response => response.text()).then(result => {
-    Swal.fire('สั่งซื้อสำเร็จ', '', 'success');
-    document.getElementById('order-form').reset();
-}).catch(error => {
-    Swal.fire('เกิดข้อผิดพลาด', '', 'error');
-    console.error('Error:', error);
-});
+       function submitOrder() {
+    Swal.fire({
+        title: 'กำลังบันทึกข้อมูล',
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading();
+        }
+    });
+
+    const formData = new FormData(document.getElementById('order-form'));
+    const timestamp = new Date().toLocaleString('th-TH', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+    // Append order summary, total price, and timestamp to form data
+    formData.append('timestamp', timestamp);
+    formData.append('orderSummary', orderSummary);
+    formData.append('totalPrice', totalPrice);
+
+    // ส่งข้อมูลไปที่ URL ของ Google Apps Script ที่ถูกต้อง (ไม่มี URL ที่ซ้อนกัน)
+    fetch('https://script.google.com/macros/s/AKfycbwSkOh3yL789m9WaaInQvaMnCQICMTwcZRhG4uFJK6RkdUqpoHE6FAY_aNY6D-0Ps0x/exec', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.text())
+    .then(result => {
+        Swal.fire('สั่งซื้อสำเร็จ', '', 'success');
+        document.getElementById('order-form').reset();
+    })
+    .catch(error => {
+        Swal.fire('เกิดข้อผิดพลาด', '', 'error');
+        console.error('Error:', error); // ตรวจสอบข้อผิดพลาดในคอนโซล
+    });
         }
     </script>
 </body>
