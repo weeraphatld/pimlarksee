@@ -99,7 +99,7 @@
             </div>
 
             <!-- ปุ่มสั่งซื้อ -->
-            <button type="button" class="btn btn-primary-custom w-100" onclick="submitOrder()">สั่งซื้อ</button>
+            <button type="submit" class="btn btn-primary-custom w-100">สั่งซื้อ</button>
         </form>
     </div>
 
@@ -137,8 +137,14 @@ function toggleAddressField() {
     document.getElementById('total-price').innerText = `${totalPrice} บาท`;
     document.getElementById('promptpay').src = `https://promptpay.io/0997416794/${totalPrice}.png`;
 }
+        
+         document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('order-form').addEventListener('submit', function(event) {
+                event.preventDefault(); // Prevent the default form submission
+                submitOrder(); // Call your submit order function
+            });
+        });
 
-    
       function submitOrder() {
     Swal.fire({
         title: 'กำลังบันทึกข้อมูล',
