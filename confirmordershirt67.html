@@ -131,21 +131,21 @@
         document.getElementById('total-price').innerText = `${totalPrice} บาท`;
         document.getElementById('promptpay').src = `https://promptpay.io/0997416794/${totalPrice}.png`;
 
-        // Function to save form data to localStorage
+    // Function to save form data to localStorage
     function saveFormData() {
         const formElements = document.getElementById('order-form').elements;
         for (let element of formElements) {
-            if (element.name) {
+            if (element.name && element.id !== 'pickupMethod') { // Exclude pickupMethod from being saved
                 localStorage.setItem(element.name, element.value);
             }
         }
     }
 
-    // Function to restore form data from localStorage
+    // Function to restore form data from localStorage, excluding pickupMethod
     function restoreFormData() {
         const formElements = document.getElementById('order-form').elements;
         for (let element of formElements) {
-            if (element.name) {
+            if (element.name && element.id !== 'pickupMethod') { // Exclude pickupMethod from being restored
                 const savedValue = localStorage.getItem(element.name);
                 if (savedValue) {
                     element.value = savedValue;
@@ -161,7 +161,7 @@
         // Save form data on input changes
         const formElements = document.getElementById('order-form').elements;
         for (let element of formElements) {
-            if (element.name) {
+            if (element.name && element.id !== 'pickupMethod') { // Exclude pickupMethod from save event
                 element.addEventListener('input', saveFormData);
                 if (element.tagName === 'SELECT') {
                     element.addEventListener('change', saveFormData);
@@ -169,35 +169,35 @@
             }
         }
 
+        // Save form data on form submission
         document.getElementById('order-form').addEventListener('submit', function(event) {
             event.preventDefault(); // Prevent the default form submission
             submitOrder(); // Call your submit order function
         });
     });
-    
-        // Function to toggle address field and update total price
-function toggleAddressField() {
-    const pickupMethod = document.getElementById('pickupMethod').value;
-    
-    // Reset total price before applying any changes
-    totalPrice = parseFloat(localStorage.getItem('totalPrice'));
-    orderSummary = localStorage.getItem('orderSummary');
 
-    if (pickupMethod === 'จัดส่งสินค้า') {
-        document.getElementById('address-field').style.display = 'block';
-        totalPrice += shippingFee; // Add shipping fee
-        orderSummary += `\nค่าส่งสินค้า: ${shippingFee} บาท`;
-    } else {
-        document.getElementById('address-field').style.display = 'none';
-        orderSummary = orderSummary.replace(`\nค่าส่งสินค้า: ${shippingFee} บาท`, ''); // Remove the shipping fee from the summary
-    }
-
-    // Update displayed total price and order summary
-    document.getElementById('orderSummary').innerText = orderSummary;
-    document.getElementById('total-price').innerText = `${totalPrice} บาท`;
-    document.getElementById('promptpay').src = `https://promptpay.io/0997416794/${totalPrice}.png`;
-}
+    // Function to toggle address field and update total price
+    function toggleAddressField() {
+        const pickupMethod = document.getElementById('pickupMethod').value;
         
+        // Reset total price before applying any changes
+        totalPrice = parseFloat(localStorage.getItem('totalPrice'));
+        orderSummary = localStorage.getItem('orderSummary');
+
+        if (pickupMethod === 'จัดส่งสินค้า') {
+            document.getElementById('address-field').style.display = 'block';
+            totalPrice += shippingFee; // Add shipping fee
+            orderSummary += `\nค่าส่งสินค้า: ${shippingFee} บาท`;
+        } else {
+            document.getElementById('address-field').style.display = 'none';
+            orderSummary = orderSummary.replace(`\nค่าส่งสินค้า: ${shippingFee} บาท`, ''); // Remove the shipping fee from the summary
+        }
+
+        // Update displayed total price and order summary
+        document.getElementById('orderSummary').innerText = orderSummary;
+        document.getElementById('total-price').innerText = `${totalPrice} บาท`;
+        document.getElementById('promptpay').src = `https://promptpay.io/0997416794/${totalPrice}.png`;
+    }     
          document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('order-form').addEventListener('submit', function(event) {
                 event.preventDefault(); // Prevent the default form submission
