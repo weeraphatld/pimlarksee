@@ -135,7 +135,7 @@
             document.getElementById('promptpay').src = `https://promptpay.io/0997416794/${totalPrice}.png`;
         }
     
-       function submitOrder() {
+      function submitOrder() {
     Swal.fire({
         title: 'กำลังบันทึกข้อมูล',
         allowOutsideClick: false,
@@ -152,7 +152,27 @@
     formData.append('orderSummary', orderSummary);
     formData.append('totalPrice', totalPrice);
 
-    // ส่งข้อมูลไปที่ URL ของ Google Apps Script ที่ถูกต้อง (ไม่มี URL ที่ซ้อนกัน)
+    // Convert the payment slip file to base64
+    const paymentSlipInput = document.getElementById('paymentSlip');
+    const paymentSlipFile = paymentSlipInput.files[0];
+
+    if (paymentSlipFile) {
+        const reader = new FileReader();
+        reader.onloadend = function () {
+            const base64String = reader.result.split(',')[1]; // Get base64 string from the data URL
+            formData.append('paymentSlip', base64String); // Append base64 string to form data
+
+            // Send form data to Google Apps Script
+            sendData(formData);
+        };
+        reader.readAsDataURL(paymentSlipFile); // Read the file as a data URL
+    } else {
+        // If no file was uploaded, still send the form data without paymentSlip
+        sendData(formData);
+    }
+}
+
+function sendData(formData) {
     fetch('https://script.google.com/macros/s/AKfycbwSkOh3yL789m9WaaInQvaMnCQICMTwcZRhG4uFJK6RkdUqpoHE6FAY_aNY6D-0Ps0x/exec', {
         method: 'POST',
         body: formData
@@ -166,7 +186,7 @@
         Swal.fire('เกิดข้อผิดพลาด', '', 'error');
         console.error('Error:', error); // ตรวจสอบข้อผิดพลาดในคอนโซล
     });
-        }
+}
     </script>
 </body>
 </html>
