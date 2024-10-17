@@ -128,7 +128,7 @@
         const quantity = document.getElementById(`quantity-${index}`).value;
         if (quantity > 0) {
             const itemTotal = parseInt(price) * parseInt(quantity);
-            summary += `${name} จำนวน: ${quantity} ราคา: ${itemTotal} บาท\n`;
+            summary += `${name} x ${quantity} ราคา: ${itemTotal} บาท\n`;
             totalQuantity += parseInt(quantity);
             totalPrice += itemTotal; // Add the total price for this item to totalPrice
         }
