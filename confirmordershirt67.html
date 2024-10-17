@@ -152,14 +152,13 @@
             formData.append('orderSummary', orderSummary);
             formData.append('totalPrice', totalPrice);
     
-            fetch('https://script.google.com/macros/s/AKfycbwSkOh3yL789m9WaaInQvaMnCQICMTwcZRhG4uFJK6RkdUqpoHE6FAY_aNY6D-0Ps0x/exec', {
+           fetch('https://weeraphatld.github.io/https://script.google.com/macros/s/AKfycbwSkOh3yL789m9WaaInQvaMnCQICMTwcZRhG4uFJK6RkdUqpoHE6FAY_aNY6D-0Ps0x/exec', {
     method: 'POST',
-    body: formData,
-    mode: 'no-cors' // ปิดการตรวจสอบ CORS
-}).then(() => {
+    body: formData
+}).then(response => response.text()).then(result => {
     Swal.fire('สั่งซื้อสำเร็จ', '', 'success');
     document.getElementById('order-form').reset();
-}).catch((error) => {
+}).catch(error => {
     Swal.fire('เกิดข้อผิดพลาด', '', 'error');
     console.error('Error:', error);
 });
