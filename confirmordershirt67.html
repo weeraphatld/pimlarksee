@@ -116,24 +116,28 @@
         document.getElementById('promptpay').src = `https://promptpay.io/0997416794/${totalPrice}.png`;
     
         // Function to toggle address field and update total price
-        function toggleAddressField() {
-            const pickupMethod = document.getElementById('pickupMethod').value;
-            
-            if (pickupMethod === 'จัดส่งสินค้า') {
-                document.getElementById('address-field').style.display = 'block';
-                totalPrice += shippingFee; // Add shipping fee
-                orderSummary += `\nค่าส่งสินค้า: ${shippingFee} บาท`;
-            } else {
-                document.getElementById('address-field').style.display = 'none';
-                totalPrice -= shippingFee; // Remove shipping fee if previously added
-                orderSummary = orderSummary.replace(`\nค่าส่งสินค้า: ${shippingFee} บาท`, ''); // Remove the shipping fee from the summary
-            }
+function toggleAddressField() {
+    const pickupMethod = document.getElementById('pickupMethod').value;
     
-            // Update displayed total price and order summary
-            document.getElementById('orderSummary').innerText = orderSummary;
-            document.getElementById('total-price').innerText = `${totalPrice} บาท`;
-            document.getElementById('promptpay').src = `https://promptpay.io/0997416794/${totalPrice}.png`;
-        }
+    // Reset total price before applying any changes
+    totalPrice = parseFloat(localStorage.getItem('totalPrice'));
+    orderSummary = localStorage.getItem('orderSummary');
+
+    if (pickupMethod === 'จัดส่งสินค้า') {
+        document.getElementById('address-field').style.display = 'block';
+        totalPrice += shippingFee; // Add shipping fee
+        orderSummary += `\nค่าส่งสินค้า: ${shippingFee} บาท`;
+    } else {
+        document.getElementById('address-field').style.display = 'none';
+        orderSummary = orderSummary.replace(`\nค่าส่งสินค้า: ${shippingFee} บาท`, ''); // Remove the shipping fee from the summary
+    }
+
+    // Update displayed total price and order summary
+    document.getElementById('orderSummary').innerText = orderSummary;
+    document.getElementById('total-price').innerText = `${totalPrice} บาท`;
+    document.getElementById('promptpay').src = `https://promptpay.io/0997416794/${totalPrice}.png`;
+}
+
     
       function submitOrder() {
     Swal.fire({
