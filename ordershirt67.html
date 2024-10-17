@@ -117,7 +117,7 @@
         
     </script>
     <script>
-       function handleNextClick() {
+      function handleNextClick() {
     let summary = '';
     let totalQuantity = 0;
     let totalPrice = 0;
@@ -127,9 +127,10 @@
         const [id, name, detail, chest, price] = product;
         const quantity = document.getElementById(`quantity-${index}`).value;
         if (quantity > 0) {
-            summary += `${name} จำนวน: ${quantity}\n`;
+            const itemTotal = parseInt(price) * parseInt(quantity);
+            summary += `${name} จำนวน: ${quantity} ราคา: ${itemTotal} บาท\n`;
             totalQuantity += parseInt(quantity);
-            totalPrice += parseInt(price) * parseInt(quantity);
+            totalPrice += itemTotal; // Add the total price for this item to totalPrice
         }
     });
 
@@ -142,7 +143,7 @@
     localStorage.setItem('orderSummary', summary);
     localStorage.setItem('totalPrice', totalPrice);
 
-    // SweetAlert to confirm order summary without shipping method and total price
+    // SweetAlert to confirm order summary
     Swal.fire({
         title: 'สรุปคำสั่งซื้อ',
         html: summary.replace(/\n/g, '<br>'),
@@ -154,7 +155,6 @@
         }
     });
 }
-
     </script>
     
 </body>
