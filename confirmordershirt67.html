@@ -130,6 +130,50 @@
         document.getElementById('orderSummary').innerText = orderSummary;
         document.getElementById('total-price').innerText = `${totalPrice} บาท`;
         document.getElementById('promptpay').src = `https://promptpay.io/0997416794/${totalPrice}.png`;
+
+        // Function to save form data to localStorage
+    function saveFormData() {
+        const formElements = document.getElementById('order-form').elements;
+        for (let element of formElements) {
+            if (element.name) {
+                localStorage.setItem(element.name, element.value);
+            }
+        }
+    }
+
+    // Function to restore form data from localStorage
+    function restoreFormData() {
+        const formElements = document.getElementById('order-form').elements;
+        for (let element of formElements) {
+            if (element.name) {
+                const savedValue = localStorage.getItem(element.name);
+                if (savedValue) {
+                    element.value = savedValue;
+                }
+            }
+        }
+    }
+
+    // Call restoreFormData on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        restoreFormData();
+        
+        // Save form data on input changes
+        const formElements = document.getElementById('order-form').elements;
+        for (let element of formElements) {
+            if (element.name) {
+                element.addEventListener('input', saveFormData);
+                if (element.tagName === 'SELECT') {
+                    element.addEventListener('change', saveFormData);
+                }
+            }
+        }
+
+        document.getElementById('order-form').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent the default form submission
+            submitOrder(); // Call your submit order function
+        });
+    });
     
         // Function to toggle address field and update total price
 function toggleAddressField() {
